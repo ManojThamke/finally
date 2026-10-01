@@ -1,60 +1,68 @@
-# FinAlly — AI Trading Workstation
+# FinAlly — Finance Ally
 
-A visually stunning AI-powered trading workstation that streams live market data, simulates portfolio trading, and integrates an LLM chat assistant that can analyze positions and execute trades via natural language.
+An AI-powered trading workstation: live-streaming market data, a simulated $10,000 portfolio, and an LLM chat assistant that can analyze positions and execute trades for you. Think Bloomberg terminal with an AI copilot.
 
-Built entirely by coding agents as a capstone project for an agentic AI coding course.
+Built entirely by coding agents as the capstone project for an agentic AI coding course. The full specification is in [`planning/PLAN.md`](planning/PLAN.md).
 
-## Features
+## Status
 
-- **Live price streaming** via SSE with green/red flash animations
-- **Simulated portfolio** — $10k virtual cash, market orders, instant fills
-- **Portfolio visualizations** — heatmap (treemap), P&L chart, positions table
-- **AI chat assistant** — analyzes holdings, suggests and auto-executes trades
-- **Watchlist management** — track tickers manually or via AI
-- **Dark terminal aesthetic** — Bloomberg-inspired, data-dense layout
+Work in progress.
+
+| Component | State |
+|---|---|
+| Market data (simulator, Massive client, price cache, SSE stream) | Built and tested |
+| Portfolio, watchlist, and chat APIs; SQLite database | Planned |
+| Next.js frontend | Planned |
+| Dockerfile and start/stop scripts | Planned |
+| Playwright E2E tests | Planned |
 
 ## Architecture
 
-Single Docker container serving everything on port 8000:
+One Docker container serving everything on port 8000:
 
-- **Frontend**: Next.js (static export) with TypeScript and Tailwind CSS
-- **Backend**: FastAPI (Python/uv) with SSE streaming
-- **Database**: SQLite with lazy initialization
-- **AI**: LiteLLM → OpenRouter (Cerebras inference) with structured outputs
-- **Market data**: Built-in GBM simulator (default) or Massive API (optional)
+- **Frontend** — Next.js (TypeScript) static export, served by FastAPI
+- **Backend** — FastAPI, managed with `uv`
+- **Database** — SQLite at `db/finally.db`, created and seeded on first run
+- **Real-time data** — Server-Sent Events at `/api/stream/prices`
+- **AI** — LiteLLM → OpenRouter (Cerebras inference) with structured outputs
+- **Market data** — built-in GBM simulator by default, or real data via the Massive API
 
-## Quick Start
+## Project Layout
+
+```
+backend/     FastAPI uv project (market data lives in app/market/)
+frontend/    Next.js project
+planning/    Project documentation shared by all agents
+test/        Playwright E2E tests
+db/          Runtime mount point for the SQLite file
+```
+
+## Configuration
+
+Create a `.env` file in the project root:
 
 ```bash
-# Clone and configure
-cp .env.example .env
-# Add your OPENROUTER_API_KEY to .env
-
-# Run with Docker
-docker build -t finally .
-docker run -v finally-data:/app/db -p 8000:8000 --env-file .env finally
-
-# Open http://localhost:8000
+OPENROUTER_API_KEY=your-key   # Required for AI chat
+MASSIVE_API_KEY=              # Optional: real market data (simulator used if empty)
+LLM_MOCK=false                # Optional: "true" for deterministic mock LLM responses
 ```
 
-## Environment Variables
+## Development
 
-| Variable | Required | Description |
-|---|---|---|
-| `OPENROUTER_API_KEY` | Yes | OpenRouter API key for AI chat |
-| `MASSIVE_API_KEY` | No | Massive (Polygon.io) key for real market data; omit to use simulator |
-| `LLM_MOCK` | No | Set `true` for deterministic mock LLM responses (testing) |
+Backend tests and linting:
 
-## Project Structure
-
+```bash
+cd backend
+uv sync --extra dev
+uv run pytest
+uv run ruff check .
 ```
-finally/
-├── frontend/    # Next.js static export
-├── backend/     # FastAPI uv project
-├── planning/    # Project documentation and agent contracts
-├── test/        # Playwright E2E tests
-├── db/          # SQLite volume mount (runtime)
-└── scripts/     # Start/stop helpers
+
+Watch the market simulator run in the terminal:
+
+```bash
+cd backend
+uv run market_data_demo.py
 ```
 
 ## License
