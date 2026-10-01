@@ -26,24 +26,34 @@ Single Docker container serving everything on port 8000:
 ## Quick Start
 
 ```bash
-# Clone and configure
-cp .env.example .env
-# Add your OPENROUTER_API_KEY to .env
-
-# Run with Docker
-docker build -t finally .
-docker run -v finally-data:/app/db -p 8000:8000 --env-file .env finally
-
-# Open http://localhost:8000
+cp .env.example .env          # then add your OPENROUTER_API_KEY
+./scripts/start_mac.sh        # macOS / Linux  (Windows: .\scripts\start_windows.ps1)
+# open http://localhost:8000
+./scripts/stop_mac.sh         # stop (portfolio data is kept in the finally-data volume)
 ```
+
+Or with plain Docker:
+
+```bash
+docker build -t finally .
+docker run -d --name finally -v finally-data:/app/db -p 8000:8000 --env-file .env finally
+```
+
+No API key? Set `LLM_MOCK=true` in `.env` to get deterministic mock chat replies.
+See [HOW_TO_RUN.md](HOW_TO_RUN.md) for local development without Docker and for running tests.
 
 ## Environment Variables
 
 | Variable | Required | Description |
 |---|---|---|
-| `OPENROUTER_API_KEY` | Yes | OpenRouter API key for AI chat |
+| `OPENROUTER_API_KEY` | Yes* | OpenRouter API key for AI chat (primary provider) |
+| `GEMINI_API_KEY` | Yes* | Google Gemini key, alternative/fallback LLM provider |
+| `LLM_PROVIDER` | No | `auto` (default), `openrouter` or `gemini` |
+| `LLM_MODEL` | No | Gemini model override (default `gemini/gemini-2.5-flash`) |
 | `MASSIVE_API_KEY` | No | Massive (Polygon.io) key for real market data; omit to use simulator |
 | `LLM_MOCK` | No | Set `true` for deterministic mock LLM responses (testing) |
+
+\* AI chat needs at least one of `OPENROUTER_API_KEY` or `GEMINI_API_KEY` (or `LLM_MOCK=true`). See [HOW_TO_RUN.md](HOW_TO_RUN.md) for provider selection.
 
 ## Project Structure
 
@@ -54,7 +64,7 @@ finally/
 ├── planning/    # Project documentation and agent contracts
 ├── test/        # Playwright E2E tests
 ├── db/          # SQLite volume mount (runtime)
-└── scripts/     # Start/stop helpers
+└── scripts/     # Docker start/stop helpers (macOS/Linux + Windows)
 ```
 
 ## License

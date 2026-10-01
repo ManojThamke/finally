@@ -1,0 +1,35 @@
+# VCS / editor / agent config
+.git
+.github
+.claude
+.idea
+.vscode
+planning
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Node / Next.js
+**/node_modules
+frontend/.next
+frontend/out
+**/*.tsbuildinfo
+
+# Python
+**/__pycache__
+**/*.py[cod]
+**/.venv
+**/.pytest_cache
+**/.ruff_cache
+**/.mypy_cache
+backend/static
+
+# Runtime data
+db/*.db
+db/*.db-*
+
+# Tests / artifacts
+test
+**/coverage

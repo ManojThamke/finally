@@ -1,0 +1,17 @@
+{
+  "name": "finally-e2e",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Playwright E2E tests for FinAlly",
+  "scripts": {
+    "test": "playwright test",
+    "test:api": "playwright test --project=api --no-deps",
+    "test:ui": "playwright test --project=ui --no-deps",
+    "report": "playwright show-report",
+    "install-browsers": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@types/node": "^22.0.0"
+  }
+}

@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+  background: #0d1117;
+  color: #c9d1d9;
+}
+
+body {
+  font-feature-settings: "tnum" 1, "zero" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle scanline grid behind the terminal. */
+.terminal-bg {
+  background-color: #0d1117;
+  background-image:
+    radial-gradient(ellipse at top left, rgba(32, 157, 215, 0.06), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(117, 57, 145, 0.07), transparent 55%);
+}
+
+.panel {
+  @apply bg-ink-850/90 border border-ink-700 rounded-[3px] flex flex-col min-h-0 min-w-0;
+}
+
+.panel-title {
+  @apply flex items-center justify-between gap-2 px-3 h-8 shrink-0 border-b border-ink-700 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink-300;
+}
+
+.panel-title .tag {
+  @apply text-accent;
+}
+
+.num {
+  @apply font-mono tabular-nums;
+}
+
+.input {
+  @apply h-8 rounded-[3px] border border-ink-600 bg-ink-900 px-2 font-mono text-[13px] text-ink-100 placeholder:text-ink-500 outline-none transition-colors focus:border-primary;
+}
+
+.btn {
+  @apply h-8 rounded-[3px] px-3 text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+/* Price flash: class is applied for ~500ms, background fades back via transition. */
+.price-cell {
+  transition: background-color 500ms ease-out, color 500ms ease-out;
+}
+.flash-up {
+  background-color: rgba(38, 208, 124, 0.28);
+  transition: none;
+}
+.flash-down {
+  background-color: rgba(255, 92, 92, 0.28);
+  transition: none;
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #30363d transparent;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.dot-pulse {
+  animation: pulse-dot 1.2s ease-in-out infinite;
+}
+
+@keyframes typing {
+  0%, 80%, 100% { opacity: 0.2; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-2px); }
+}
+.typing span {
+  animation: typing 1.2s infinite ease-in-out;
+}
+.typing span:nth-child(2) { animation-delay: 0.15s; }
+.typing span:nth-child(3) { animation-delay: 0.3s; }
